@@ -1,68 +1,86 @@
-// --- 1. पेज लोड और इनिशियल सेटअप ---
-window.onload = () => {
-//    let savedLang = localStorage.getItem("selectedLanguage") || "hi";
-//    switchLanguage(savedLang);
-
-    // अगर पहली बार आए हैं तो पॉपअप दिखाएं (चेक लोकल स्टोरेज)
-//    if(!localStorage.getItem("selectedLanguage")) {
-        document.getElementById("welcomeModal").style.display = "flex";
-//    }
-//    else {
-//        document.getElementById("welcomeModal").style.display = "none";
-//
-//    }
-
-
-};
-
-// --- 2. पॉपअप से भाषा और लोकेशन चुनना ---
-function selectInitialLang(lang) {
-    console.log("भाषा चुनी गई: " + lang);
-    switchLanguage(lang); // भाषा बदलो
-
-//    // पॉपअप को गायब करो
-    document.getElementById("welcomeModal").style.display = "none";
-
-    // ब्राउज़र से लोकेशन मांगो (Allow/Deny)
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-            alert("Location Access Granted");
-                            console.log(position.coords.latitude, position.coords.longitude);
-
-                // यहाँ आप यूजर के पास का स्टेशन फेच करने का लॉजिक डाल सकते हैं
-            },
-            (error) => {
-               if (error.code === error.PERMISSION_DENIED) {
-                alert("बिना लोकेशन के भीड़ की सटीक जानकारी नहीं मिल पाएगी।");
-            }
-            },
-             { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-
-        );
-    }else{
-    alert("आपके ब्राउज़र में Geolocation सपोर्ट नहीं है।");
-    }
-}
-
-// --- 3. भाषा बदलने का लॉजिक ---
+/* =====================================================
+   1. LANGUAGE DATA (Hindi & English)
+===================================================== */
 const translations = {
     hi: {
         title: "भारतरेल 🇮🇳",
         searchBtn: "कोच ढूँढें",
         placeholder: "ट्रेन नंबर या नाम डालें...",
         guideTitle: "हेल्प गाइड 📱",
-        rushTitle: "भीड़ की स्थिति"
+        locationPrompt: "सटीक जानकारी के लिए लोकेशन परमिशन ज़रूरी है।",
+        noTrain: "ट्रेन नहीं मिली!",
+        enterTrain: "कृपया ट्रेन नंबर या नाम डालें"
     },
     en: {
         title: "BharatRail 🚂",
         searchBtn: "Find Coach",
         placeholder: "Enter Train No or Name...",
         guideTitle: "Help Guide 📱",
-        rushTitle: "Rush Status"
+        locationPrompt: "Location permission is required for accurate info.",
+        noTrain: "Train not found!",
+        enterTrain: "Please enter train number or name"
     }
 };
 
+/* =====================================================
+   2. PAGE LOAD – INITIAL SETUP
+===================================================== */
+document.addEventListener("DOMContentLoaded", () => {
+
+    const savedLang = localStorage.getItem("selectedLanguage");
+
+    if (!savedLang) {
+        document.getElementById("welcomeModal").style.display = "flex";
+    } else {
+        switchLanguage(savedLang);
+        document.getElementById("welcomeModal").style.display = "none";
+        requestLocationPermission();
+    }
+//});
+
+/* =====================================================
+   3. LANGUAGE SELECTION FROM MODAL
+===================================================== */
+function selectInitialLang(lang) {
+
+    // 1️ language set
+    switchLanguage(lang);
+    localStorage.setItem("selectedLanguage", lang);
+
+    // 2 popup FORCE hide
+    const modal = document.getElementById("welcomeModal");
+    modal.style.display = "none";
+    modal.style.visibility = "hidden";
+    modal.style.opacity = "0";
+    modal.style.pointerEvents = "none";
+
+     // 🔓 BODY UNLOCK (MOST IMPORTANT)
+        document.body.style.overflow = "auto";
+
+    // 3️ location modal (optional)
+    setTimeout(() => {
+        const locModal = document.getElementById("locationModal");
+        if (locModal) locModal.style.display = "flex";
+    }, 300);
+
+    // 4️ location permission ONLY if function exists
+    if (typeof requestLocationPermission === "function") {
+        requestLocationPermission();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   4. SWITCH LANGUAGE FUNCTION
+===================================================== */
 function switchLanguage(lang) {
     document.getElementById("appTitle").innerText = translations[lang].title;
     document.querySelector(".btn-find").innerText = translations[lang].searchBtn;
@@ -71,74 +89,106 @@ function switchLanguage(lang) {
     if (document.getElementById("guideHeader")) {
         document.getElementById("guideHeader").innerText = translations[lang].guideTitle;
     }
-    localStorage.setItem("selectedLanguage", lang);
+
+    if (document.getElementById("locationPrompt")) {
+        document.getElementById("locationPrompt").innerText =
+            translations[lang].locationPrompt;
+    }
 }
 
-// --- 4. सर्च फंक्शन (Name और Number दोनों के लिए) ---
-function findTrain() {
-    let query = document.getElementById("trainInput").value;
-    if (!query) {
-        alert("कृपया ट्रेन नंबर या नाम डालें");
+/* =====================================================
+   5. LOCATION PERMISSION
+===================================================== */
+function requestLocationPermission() {
+    if (!navigator.geolocation) {
+        alert("Geolocation not supported");
         return;
     }
 
-    // suggest API का उपयोग जो नाम और नंबर दोनों हैंडल करता है
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            console.log("Location Granted:", pos.coords.latitude, pos.coords.longitude);
+        },
+        (err) => {
+            console.warn("Location Denied");
+        },
+        { enableHighAccuracy: true, timeout: 5000 }
+    );
+}
+
+/* =====================================================
+   6. TRAIN SEARCH FUNCTION
+===================================================== */
+function findTrain() {
+    const query = document.getElementById("trainInput").value.trim();
+    const lang = localStorage.getItem("selectedLanguage") || "hi";
+
+    if (!query) {
+        alert(translations[lang].enterTrain);
+        return;
+    }
+
     fetch(`/api/trains/suggest?query=${query}`)
         .then(res => res.json())
         .then(data => {
-            if (data && data.length > 0) {
-                // अगर एरे आया है तो पहला रिजल्ट दिखाओ
+            if (Array.isArray(data) && data.length > 0) {
                 displayTrainData(data[0]);
             } else if (data && data.trainNumber) {
-                // अगर सीधा ऑब्जेक्ट आया है
                 displayTrainData(data);
             } else {
-                alert("ट्रेन नहीं मिली!");
+                alert(translations[lang].noTrain);
             }
         })
         .catch(err => {
             console.error("Search Error:", err);
-            alert("सर्वर से संपर्क नहीं हो पाया।");
+            alert("Server error");
         });
+}
 
-//}
-// --- 5. डेटा डिस्प्ले और विजुअल लेआउट ---
+/* =====================================================
+   7. DISPLAY TRAIN DATA
+===================================================== */
 function displayTrainData(data) {
-    console.log("Displaying Data:", data);
-    let resultCard = document.getElementById("resultCard");
+    const resultCard = document.getElementById("resultCard");
     resultCard.style.display = "block";
 
-    // नाम और कोच मैपिंग
-    document.getElementById("trainName").innerText = data.trainName || data.name || "N/A";
-    document.getElementById("coachPos").innerText = "कोच पोजीशन: " + (data.generalPosition || "N/A");
+    document.getElementById("trainName").innerText =
+        data.trainName || data.name || "N/A";
+
+    document.getElementById("coachPos").innerText =
+        "Coach Position: " + (data.generalPosition || "N/A");
 
     if (document.getElementById("platformTip")) {
-        document.getElementById("platformTip").innerText = "टिप: " + (data.platformTip || "उपलब्ध नहीं");
+        document.getElementById("platformTip").innerText =
+            "Tip: " + (data.platformTip || "Not Available");
     }
 
-    // विजुअल मैप ड्रॉ करना
     drawTrainVisual(data.generalPosition || "");
 }
 
-function drawTrainVisual(pos) {
+/* =====================================================
+   8. TRAIN VISUAL (GENERAL COACH HIGHLIGHT)
+===================================================== */
+function drawTrainVisual(position) {
     const container = document.getElementById("trainVisual");
     if (!container) return;
+
     container.innerHTML = "";
 
-    // इंजन
-    let engine = document.createElement("div");
+    // Engine
+    const engine = document.createElement("div");
     engine.className = "coach engine";
     engine.innerText = "🚂";
     container.appendChild(engine);
 
-    // 12 डिब्बे
+    // Coaches
     for (let i = 1; i <= 12; i++) {
-        let coach = document.createElement("div");
+        const coach = document.createElement("div");
         coach.className = "coach";
-        let isGeneral = false;
 
-        if (pos.includes("Front") && i <= 2) isGeneral = true;
-        if (pos.includes("Back") && i >= 11) isGeneral = true;
+        let isGeneral = false;
+        if (position.includes("Front") && i <= 2) isGeneral = true;
+        if (position.includes("Back") && i >= 11) isGeneral = true;
 
         if (isGeneral) {
             coach.classList.add("general");
@@ -146,6 +196,8 @@ function drawTrainVisual(pos) {
         } else {
             coach.innerText = i;
         }
+
         container.appendChild(coach);
     }
 }
+});
