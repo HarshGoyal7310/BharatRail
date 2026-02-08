@@ -1,0 +1,223 @@
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    text-align: center;
+
+}
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex; /* इसे JS से 'none' करेंगे */
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* सबसे ऊपर रखने के लिए */
+}
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    z-index: 10001; /* कंटेंट को ओवरले के भी ऊपर रखें */
+    pointer-events: auto; /* क्लिक इनेबल करने के लिए */
+}
+
+.lang-btn-main {
+    padding: 12px 25px;
+    margin: 10px;
+    cursor: pointer;
+    border: none;
+    background-color: #003399;
+    color: white;
+    border-radius: 8px;
+    font-size: 16px;
+    display: inline-block; /* क्लिक एरिया फिक्स करने के लिए */
+}
+
+
+
+.header {
+    background-color: #003399;
+    color: white;
+    padding: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* मेन कंटेनर */
+.container {
+    padding: 20px;
+    max-width: 500px;
+    margin: auto;
+}
+
+/* इनपुट बॉक्स */
+input[type="text"] {
+    width: 80%;
+    padding: 15px;
+    margin: 10px 0;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+/* ढूंढें बटन */
+.btn-find {
+    background-color: #28a745; /* हरा रंग - Go */
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    width: 88%;
+}
+
+/* रिजल्ट कार्ड (जहाँ कोच पोजीशन दिखेगी) */
+.result-card {
+    background-color: white;
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 8px solid #ffc107; /* पीला रंग - ध्यान दें */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: none; /* शुरू में छुपा रहेगा */
+}
+
+/* UTS गाइड के छोटे कार्ड्स */
+.guide-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    text-align: left;
+}
+
+.icon {
+    font-size: 30px;
+    margin-right: 15px;
+}
+
+/* अलर्ट मैसेज (लाल रंग) */
+.error-text {
+    color: #dc3545;
+    font-weight: bold;
+}
+.suggestion-dropdown {
+    position: absolute;
+    top: 55px; /* इनपुट के ठीक नीचे */
+    left: 0;
+    width: 80%;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    z-index: 1000;
+    display: none;
+    text-align: left;
+}
+
+.suggestion-item {
+    padding: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestion-item:hover {
+    background-color: #f1f1f1;
+    color: #003399;
+}
+.train-visual {
+    display: flex;
+    gap: 5px;
+    margin: 20px 0;
+    overflow-x: auto;
+    padding: 10px;
+    background: #eee;
+    border-radius: 8px;
+}
+
+.coach {
+    min-width: 50px;
+    height: 30px;
+    background-color: #003399; /* स्लीपर/AC के लिए नीला */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    border-radius: 4px;
+    border: 1px solid #fff;
+}
+
+/* जनरल कोच का स्पेशल कलर */
+.coach.general {
+    background-color: #28a745 !important; /* चमकीला हरा */
+    font-weight: bold;
+    box-shadow: 0 0 10px #28a745;
+}
+
+.engine {
+    min-width: 60px;
+    background: #333;
+    border-radius: 8px 2px 2px 8px;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #003399;
+    color: white;
+    padding: 10px 20px;
+}
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 9999;
+}
+.modal-content {
+    background: white; padding: 30px; border-radius: 15px; text-align: center; max-width: 400px;
+}
+.modal-btns button {
+    margin: 10px; padding: 12px 25px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold;
+}
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 9999;
+}
+.modal-content {
+    background: white; padding: 30px; border-radius: 15px; text-align: center; max-width: 400px;
+}
+.modal-btns button {
+    margin: 10px; padding: 12px 25px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold;
+}
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    z-index: 10001; /* कंटेंट को ओवरले के भी ऊपर रखें */
+    pointer-events: auto; /* क्लिक इनेबल करने के लिए */
+}
+
+.lang-btn-main {
+    padding: 12px 25px;
+    margin: 10px;
+    cursor: pointer;
+    border: none;
+    background-color: #003399;
+    color: white;
+    border-radius: 8px;
+    font-size: 16px;
+    display: inline-block; /* क्लिक एरिया फिक्स करने के लिए */
+}
+
+
+

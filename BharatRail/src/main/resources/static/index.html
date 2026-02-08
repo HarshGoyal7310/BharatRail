@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BharatRail - जन-रेल सहायक</title>
+<!--    <link href="https://fonts.googleapis.com" rel="stylesheet">-->
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Language Selection POPUP Modal -->
+<div id="welcomeModal" class="modal-overlay">
+    <div class="modal-content">
+        <h2 id="modalHeader">BharatRail 🚂</h2>
+        <p>Select Language / अपनी भाषा चुनें</p>
+        <div class="modal-btns">
+            <!-- Buttons to select language -->
+            <button type="button" onclick="selectInitialLang('hi')" class="lang-btn-main">हिन्दी</button>
+            <button type="button" onclick="selectInitialLang('en')" class="lang-btn-main">English</button>
+        </div>
+        <p id="locationPrompt" style="font-size: 12px; color: #666; margin-top: 15px;">
+            Location permission is required for accurate info.
+        </p>
+    </div>
+</div>
+
+    <div class="header">
+        <span id="appTitle">BharatRail</span>
+        <div class="lang-selection">
+            <select onchange="switchLanguage(this.value)" id="langSelect" aria-label="Select language / भाषा चुनें">
+                <option value="hi">हिन्दी</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+    </div>
+
+<!--<div id="welcomeModal" class="modal-overlay" style="display:none;">-->
+<!--    <div class="modal-content">-->
+<!--        <h2 id = "modalHeader"> BharatRail 🚂</h2>-->
+<!--        <p>अपनी भाषा चुनें / Select Language</p>-->
+<!--        <div class="modal-btns">-->
+<!--            <button type="button" onclick="selectInitialLang('hi')">हिन्दी</button>-->
+<!--            <button type="button" onclick="selectInitialLang('en')">English</button>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!-- नया: लोकेशन परमिशन के लिए पहले दिखाई देने वाला मोडल -->
+<div id="locationModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <h2>Location Permission</h2>
+        <p>कृपया अपने डिवाइस की लोकेशन शेयर करें ताकि नज़दीकी स्टेशन और भीड़ की सटीक जानकारी दी जा सके।</p>
+        <div class="modal-btns">
+            <button onclick="requestLocation()">Allow Location</button>
+            <button onclick="skipLocation()">Skip</button>
+        </div>
+    </div>
+</div>
+
+
+    <div class="container">
+        <div class="search-box" style="position: relative;">
+            <input type="text" id="trainInput" placeholder="ट्रेन नंबर या नाम डालें..." onkeyup="showSuggestions(this.value)" aria-label="Train number or name / ट्रेन नंबर या नाम">
+
+            <!-- Suggestions के लिए Dropdown -->
+            <div id="suggestionBox" class="suggestion-dropdown"></div>
+
+            <button class="btn-find" onclick="findTrain()">कोच ढूँढें</button>
+        </div>
+<!--        <button type="button" onclick="selectInitialLang('hi')" class="lang-btn-main">हिन्दी</button>-->
+
+
+
+    </div>
+
+
+
+    <div id="resultCard" class="result-card" style="display: none;">
+
+        <div id="trainVisual" class="train-visual"></div>
+
+        <h3 id="trainName">--</h3>
+        <p id="coachPos"></p>
+        <p id="platformTip"></p>
+    </div>
+
+    <hr style="margin: 30px 0; border: 0.5px solid #ccc;">
+
+
+    <h3>UTS हेल्प गाइड 📱</h3>
+
+    <div class="guide-card">
+        <span class="icon">📍</span>
+        <div><b>GPS समस्या?</b><br>स्टेशन की पटरी से 20-30 मीटर दूर जाकर टिकट बुक करें।</div>
+    </div>
+
+    <div class="guide-card">
+        <span class="icon">💳</span>
+        <div><b>पेमेंट फेल?</b><br>UTS R-Wallet का उपयोग करें, यह ज्यादा तेज और सुरक्षित है।</div>
+    </div>
+
+    <div class="guide-card">
+        <span class="icon">🎟️</span>
+        <div><b>टिकट कहाँ है?</b><br>स्क्रीनशॉट मान्य नहीं है, ऐप में 'Show Ticket' का प्रयोग करें।</div>
+    </div>
+
+<div id="feedbackSection" style="display:none; margin-top:20px;">
+    <p>BharatRail आपकी मदद कर पाया? रेटिंग दें:</p>
+    <div class="stars">
+        <span onclick="submitRating(1)">⭐</span>
+        <span onclick="submitRating(2)">⭐</span>
+        <span onclick="submitRating(3)">⭐</span>
+        <span onclick="submitRating(4)">⭐</span>
+        <span onclick="submitRating(5)">⭐</span>
+    </div>
+    <div class="rating-box">
+        <span>Rating: </span><span id="avgRating">0.0</span> ⭐
+    </div>
+</div>
+
+
+
+
+
+<script src="js/script.js"></script>
+</body>
+</html>
